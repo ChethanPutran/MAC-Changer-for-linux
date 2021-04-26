@@ -55,13 +55,11 @@ def getArguments():
         print(termcolor2.colored(("[!!] *Interface name required! Use '--help' for more info."),'red'))
         exit(0)
         
-    if(options.randomMAC and not(options.macAddress)):
-        if(not(type(options.randomMAC)== int) and (not(options.randomMAC in [0,1]))):
-            print(termcolor2.colored(("Invalid Arguments!!! Use '--help' for more info."),'red'))
-            exit(0)
+    if((options.randomMAC == True ) and not(options.macAddress)):
+        return (options.interface,None)
     elif(not(options.randomMAC) and (options.macAddress)):
         mac = options.macAddress
-        test = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w",mac).group(0)
+        test = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w",str(mac)).group(0)
    
         if(str(test)!=mac):
             print(termcolor2.colored(("Invalid MAC Address!"),'red'))
@@ -73,16 +71,16 @@ def getArguments():
                 else:
                     print(termcolor2.colored(("Invalid MAC Address!"),'red'))
                     exit(0)
-                    
+            return (options.interface,options.macAddress)           
     else:
         print(termcolor2.colored(("Can't use -m and -r together! Use '--help' for more info."), 'red'))
         exit(0)
            
-    return options
+    
 
 def checkResult(interface,trueMAC):
     results = subprocess.check_output(["ifconfig ",interface])
-    resMAC = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w",results)
+    resMAC = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w",str(results))
     if(resMAC):
         if resMAC == trueMAC:
             return True
@@ -91,14 +89,10 @@ def checkResult(interface,trueMAC):
     
 
 #Getting arguments entered by user
-options = getArguments()
-
-interface = options.interface
+interface,newMACAddress = getArguments()
 
 #Getting new MAC Address if user does not specify MAC Address
-try:
-    newMACAddress = options.newMACAddress
-except:
+if(not(newMACAddress)):
     print(termcolor2.colored(("[+] *Configuring a random MAC Address to the interface..."),'yellow'))
     newMACAddress = getNewMAC()
 
