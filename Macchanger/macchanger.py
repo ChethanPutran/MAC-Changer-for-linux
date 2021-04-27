@@ -22,6 +22,7 @@ def getNewMAC():
         if(i!=2):
             mac.append(unit)
         else:
+            #Assigning unicast address
             unit = random.choice([ele for ele in possibitities if ele not in ['1','3','5','7','9','b','d','f']])
             mac.append(unit)
         if ((i%2 == 0) and not(i==12)):
